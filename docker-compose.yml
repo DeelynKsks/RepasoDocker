@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+
+  my_mongo_db:
+    image: mongo:6.0
+    ports:
+      - 27017
+    volumes:
+      - ./bd/MongoDB:/data/bd
+
+  my_maria_db:
+    image: mariadb:10.6.14
+    ports:
+      - 3306:3306
+    environment:
+      - MARIADB_ROOT_PASSWORD=Another7w7
+    volumes:
+      - ./bd/MariaDB:/var/lib/mysql
+
+  my_server:
+    build: 
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - 3600:3500
+    environment:
+      - MONGODB_URI=mongodb://my_mongo_db:27017
+      - MARIADB_HOST=my_maria_db
+      - MARIADB_PASSWORD=Another7w7
+      - MARIADB_PORT=3306
+      - PORTDOCKER=3600
+    depends_on:
+      - my_mongo_db
+      - my_maria_db
